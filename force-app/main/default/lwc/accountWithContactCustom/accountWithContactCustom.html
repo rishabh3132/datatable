@@ -1,0 +1,205 @@
+<template>
+	<lightning-card title={cardTitle} icon-name="standard:account">
+		<lightning-button label="New Account" slot="actions" onclick={newAccountCreate} icon-name="utility:new">
+		</lightning-button>
+		<template if:true={showTable}>
+			<div style="max-height:300px;" class="fullwidth slds-scrollable">
+				<table class="fix-width slds-table slds-table_cell-buffer slds-table_bordered">
+					<thead>
+						<tr class="slds-line-height_reset">
+							<template for:each={accountTableHeader} for:item="field">
+								<th key={field.apiName} class="" scope="col">
+									<div data-type={field.dataType} data-order='asc' data-field-name={field.apiName}
+										onclick={handleColumnSorting} class="cursor slds-truncate" title={field.label}>
+										{field.label}
+										<lightning-button-icon data-field-api-name={field.apiName} variant="bare"
+											size="small" icon-name="utility:arrowdown">
+										</lightning-button-icon>
+									</div>
+								</th>
+							</template>
+							<th class="slds-cell_action-mode" scope="col">
+								<div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<template for:each={initialAccounts} for:item="acc">
+							<tr class="slds-hint-parent" key={acc.Id}>
+								<td data-label="Account Name">
+									<lightning-button-icon class="btn-icon" data-account-id={acc.Id}
+										onclick={openRelatedContacts} type="button" variant="bare" size="small"
+										icon-name="utility:chevronright" alternative-text="open">
+									</lightning-button-icon>
+									<span class="slds-m-left_small slds-truncate" title={acc.Name}>
+                                    <a href={acc.accountLink} target="_blank">{acc.title}</a>
+                                </span>
+								</td>
+								<td data-label="Rating">
+									<div class="slds-truncate" title={acc.Rating}>{acc.Rating}</div>
+								</td>
+								<td data-label="Industry">
+									<div class="slds-truncate" title={acc.Industry}>{acc.Industry}</div>
+								</td>
+								<td data-label="Annual Revenue">
+									<div class="slds-truncate" title={acc.AnnualRevenue}>
+										<lightning-formatted-number value={acc.AnnualRevenue} format-style="currency"
+											currency-code="USD"></lightning-formatted-number>
+									</div>
+								</td>
+								<td data-label="Phone">
+									<div class="slds-truncate" title={acc.Phone}>
+										<lightning-formatted-phone value={acc.Phone}></lightning-formatted-phone>
+									</div>
+								</td>
+								<td data-label="Action">
+									<div class="slds-truncate" title="Actions">
+										<lightning-button-menu data-account-id={acc.Id} onselect={accountActions}
+											menu-alignment="auto" icon-size="small" alternative-text="Show menu"
+											variant="border">
+											<lightning-menu-item value={acc.Id} href={acc.accountLink} target="_blank"
+												label="View">
+											</lightning-menu-item>
+											<lightning-menu-item value="edit" label="Edit">
+											</lightning-menu-item>
+											<lightning-menu-item value="delete" label="Delete">
+											</lightning-menu-item>
+										</lightning-button-menu>
+									</div>
+								</td>
+							</tr>
+							<tr data-account-id={acc.Id} class="display-none" key={acc.Id}>
+								<td colspan="6">
+									<div class="contact-table">
+										<table>
+											<thead>
+												<tr>
+													<template for:each={contactTableHeader} for:item="con">
+														<th key={con.apiName}>{con.label}
+															<lightning-button-icon variant="bare" data-sort-order="asc"
+																onclick={contactSorting} data-field-api={con.apiName}
+																size="small" icon-name="utility:arrowdown">
+															</lightning-button-icon>
+														</th>
+													</template>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+												<template for:each={contacts} for:item="con">
+													<tr key={con.Id}>
+														<td>{con.FirstName}</td>
+														<td>{con.LastName}</td>
+														<td>{con.Title}</td>
+														<td>
+															<lightning-formatted-email value={con.Email}>
+															</lightning-formatted-email>
+														</td>
+														<td>
+															<lightning-formatted-phone value={con.Phone}>
+															</lightning-formatted-phone>
+														</td>
+														<td>{con.Department}</td>
+														<td>{con.LeadSource}</td>
+														<td>{con.Level__c}</td>
+														<td>{con.Languages__c}</td>
+														<td>{con.MobilePhone}</td>
+														<td>{con.GenderIdentity}</td>
+														<td>
+															<div class="slds-truncate" title="Actions">
+																<lightning-button-menu data-contact-id={con.Id}
+																	onselect={contactAction} menu-alignment="auto"
+																	icon-size="small" alternative-text="Show menu"
+																	variant="border">
+																	<lightning-menu-item value="view" label="View">
+																	</lightning-menu-item>
+																	<lightning-menu-item value="edit" label="Edit">
+																	</lightning-menu-item>
+																	<lightning-menu-item value="delete" label="Delete">
+																	</lightning-menu-item>
+																</lightning-button-menu>
+															</div>
+														</td>
+													</tr>
+												</template>
+											</tbody>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+			</div>
+		</template>
+		<br>
+		<lightning-layout class="slds-p-around_small">
+			<lightning-layout-item size="1"></lightning-layout-item>
+			<lightning-layout-item size="2" class="top-margin">
+				Records per page:
+			</lightning-layout-item>
+			<lightning-layout-item size="1">
+				<lightning-combobox options={recordPageOptions} variant="label-hidden" value={recordPerPage}
+					onchange={changePerPageRecordHandler}></lightning-combobox>
+			</lightning-layout-item>
+			<lightning-layout-item size="2"></lightning-layout-item>
+			<lightning-layout-item size="2" class="slds-align_absolute-center">
+				<a title="Go to first page" onclick={goToFirstPageHandler} class={previousButtonsStyle}>
+					&lt;&lt;</a>
+				<a label="<" title="Previous page" onclick={previousPageHandler} class={previousButtonsStyle}>
+					&lt; </a>
+			</lightning-layout-item>
+			<lightning-layout-item size="2" class="slds-var-m-left_medium  slds-align_absolute-center">
+				{recordFrom} - {recordTo} of {recordCount}
+			</lightning-layout-item>
+			<lightning-layout-item size="2" class="slds-align_absolute-center">
+				<a title="Next page" onclick={nextPageHandler} class={nextButtonsStyle}>
+					&gt;</a>
+				<a label="Go to last page" title="Go to last page" onclick={goToLastPageHandler}
+					class={nextButtonsStyle}>
+					&gt;&gt; </a>
+			</lightning-layout-item>
+		</lightning-layout>
+		<template if:true={showViewEditModal}>
+			<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+				class="slds-p-around_medium container slds-modal slds-fade-in-open">
+				<div class="slds-modal__container">
+					<lightning-button-icon onclick={closeContactHandler} variant="border-filled" size="small"
+						icon-name="utility:close" alternative-text="close"></lightning-button-icon>
+					<div class="slds-modal__header">
+						<h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{header}</h1>
+					</div>
+					<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+						<lightning-record-form if:false={isReadOnly} onsuccess={handleContactSuccess}
+							oncancel={closeContactHandler} record-id={contactId} object-api-name="Contact"
+							fields={contactRequiredFields} mode={mode}>
+						</lightning-record-form>
+						<lightning-record-form columns="2" if:true={isReadOnly} record-id={contactId}
+							object-api-name="Contact" layout-type="Full" mode={mode}>
+						</lightning-record-form>
+					</div>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+		</template>
+		<template if:true={showAccountEditForm}>
+			<section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+				class="slds-modal container slds-fade-in-open">
+				<div class="slds-modal__container">
+					<lightning-button-icon onclick={closeAccountHandler} variant="border-filled" size="small"
+						icon-name="utility:close" alternative-text="close"></lightning-button-icon>
+					<div class="slds-modal__header">
+						<h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate">Account Edit</h1>
+					</div>
+					<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+						<lightning-record-form mode="edit" onsuccess={handleAccountSuccess}
+							oncancel={closeAccountHandler} record-id={accountId} object-api-name="Account"
+							layout-type="Full" columns="2">
+						</lightning-record-form>
+					</div>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+		</template>
+	</lightning-card>
+</template>

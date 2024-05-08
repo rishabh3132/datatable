@@ -1,0 +1,111 @@
+.cursor{
+    cursor: pointer;
+}
+.display-none{
+	display:none;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+}
+.custom-button {
+    cursor: pointer;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    margin: 0.143rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    -webkit-user-select: none;
+    user-select: none;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    text-decoration: none;
+    font-size: 15px;
+    background: #216dff;
+    color: white;
+    font-weight: 500;
+}
+
+.custom-button:hover {
+    background: #e0edfb;
+    border-color: transparent;
+    color: #475569;
+}
+.custom-button-disabled {
+    background: #e1e1e1;
+    pointer-events: none;
+    cursor: no-drop;
+    color: #888888;
+}
+.top-margin{
+    margin-top: 5px;
+}
+.contact-table {
+    width: 91vw;
+    max-height: 150px;
+    overflow: scroll;
+    border: 1px solid #777777;
+}
+
+.contact-table table {
+    border-spacing: 0;
+}
+
+.contact-table th {
+    top: -1px;
+    border-left: none;
+    border-right: 1px solid #bbbbbb;
+    padding: 5px;
+    width: 160px;
+    min-width: 80px;
+    position: sticky;
+    background: #dcdcdc;
+    color:black;
+    font-weight: normal;
+    z-index: 11;
+}
+
+.contact-table td {
+    border-left: none;
+    border-right: 1px solid #bbbbbb;
+    border-bottom: 1px solid #bbbbbb;
+    padding: 5px;
+    width: 120px;
+    min-width: 80px;
+}
+
+.contact-table th:nth-child(1),
+.contact-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    top: -1px;
+    width: 180px;
+    min-width: 150px;
+    z-index: 12;
+}
+
+.contact-table th:nth-child(2),
+.contact-table td:nth-child(2) {
+    position: sticky;
+    left: 149px;
+    top: -1px;
+    width: 180px;
+    z-index: 12;
+    min-width: 50px;
+}
+
+.contact-table td:nth-child(1),
+.contact-table td:nth-child(2) {
+    background: rgb(221 240 237);
+    z-index: 12;
+}
+
+.contact-table th:nth-child(1),
+.contact-table th:nth-child(2) {
+    z-index: 15;
+}
